@@ -1,0 +1,60 @@
+* {
+    font-family: "Quicksand", sans-serif !important;
+}
+
+body {
+    padding: 10px;
+}
+
+table {
+    border-radius: 5px;
+    overflow: hidden;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead tr th {
+    background-color: #daf4fd;
+    padding: 10px;
+    border: 2px solid #b1e4f5;
+    text-align: center;
+}
+
+tbody tr td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+tbody tr td i{
+    cursor: pointer;
+}
+
+tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+td:nth-child(2) {
+    text-align: left;
+}
+
+.btn-add {
+    float: right;
+    background-color: #fff;
+    color: black;
+    font-weight: 700;
+    border: 1px solid #00bc47;
+    margin-bottom: 10px;
+}
+
+.btn-add:hover {
+    background-color: #00bc47;
+    color: #fff;
+    border: 1px solid #00bc47;
+}
+
+.btn-delete-selected {
+    margin: 0 0 15px 0;
+    background-color: #fff;
+    color: #c82333;
+}

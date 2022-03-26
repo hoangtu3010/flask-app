@@ -2,7 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-class Customer(db.Model):
+class Customers(db.Model):
     __tablename__ = "customers"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -17,16 +17,15 @@ class Options(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
-    
+    questions_id = db.Column(db.Integer, db.ForeignKey(
+        "questions.id"))
+    questions = db.relationship("Questions", backref="options")
 
-class Question(db.Model):
+class Questions(db.Model):
     __tablename__ = "questions"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
-    options_id = db.Column(db.Integer, db.ForeignKey(
-        "options.id"))
-    options = db.relationship("Options", backref="options")
     
 class Answers(db.Model):
     __tablename__ = "answers"

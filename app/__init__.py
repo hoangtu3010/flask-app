@@ -1,5 +1,5 @@
 from flask import Flask, make_response, redirect, render_template, request, url_for
-from .models import db
+from .models import Answers, Options, db, Questions
 from flask_migrate import Migrate
 
 
@@ -18,136 +18,110 @@ def create_app():
     @app.route('/')
     def index():
         return render_template('index.html')
-
-    # @app.route('/category')
-    # def get_all_category():
-    #     category = Category.query.all()
-
-    #     return render_template('category/list-category.html', category=category)
     
-    # @app.route('/category/form-category/<int:id>', methods=['GET', 'POST'])
-    # def form_category(id):
-    #     title = ''
-
-    #     if id:
-    #         title = 'Edit Product'
-    #     else:
-    #         title = 'Add Product'
-            
-    #     category = {
-    #         'id': 0,
-    #         'name': '',
-    #     }
-            
-    #     find_category = Category.query.filter_by(
-    #         id=id).first()
-
-    #     if find_category:
-    #         category = find_category
-    #     else:
-    #         category = category
+    @app.route('/survey/questions')
+    def get_survey_question():
+        questions = Questions.query.all()
         
-    #     if request.method == 'POST':
-    #         if id:
-    #             category.name = request.form['name']
-    #             db.session.commit()
-    #             return redirect(url_for('get_all_category'))
-    #         else:
-    #             name = request.form['name']
-    #             category = Category(name=name)
-    #             db.session.add(category)
-    #             db.session.commit()
-    #             return redirect(url_for('get_all_category'))
-    #     else:
-    #         return render_template('category/form-category.html', category=category, title=title)
+        return render_template('questions/list-question.html', questions=questions)
     
-    # @app.route('/categories/remove_category/<int:id>')
-    # def remove_category(id):
-    #     category = Category.query.filter_by(id=id).first()
-    #     db.session.delete(category)
-    #     db.session.commit()
-    #     return redirect(url_for('get_all_category'))
+    @app.route('/survey/questions/form-question/<int:id>', methods=['GET', 'POST'])
+    def form_question(id):
+        title = ''
 
-    
-    # @app.route('/products',  methods=['GET', 'POST'])
-    # def get_all_product():
-    #     category = Category.query.all()
-    #     ct_id = 0
-        
-    #     if request.method == 'GET':
-    #         products = Product.query.all()
-    #     else:
-    #         if int(request.form['category_id']) > 0:
-    #             products = Product.query.filter_by(category_id = request.form['category_id'])
-                
-    #             if not products == []:
-    #                 ct_id = products[0].category_id
-    #             else:
-    #                 products = []
-    #         else:
-    #             products = Product.query.all()
-
-    #     return render_template('products/list-product.html', products=products, category=category, ct_id=ct_id)
-    
-    # @app.route('/products/form-product/<int:id>', methods=['GET', 'POST'])
-    # def form_product(id):
-    #     title = ''
-
-    #     if id:
-    #         title = 'Edit Product'
-    #     else:
-    #         title = 'Add Product'
+        if id:
+            title = 'Edit Questions'
+        else:
+            title = 'Add Questions'
             
-    #     product = {
-    #         'id': 0,
-    #         'name': '',
-    #         'price': 0,
-    #         'category_id': 0,
-    #         'category': {
-    #             'id': 0,
-    #             'name': ''
-    #         }
-    #     }
+        question = {
+            'id': 0,
+            'name': '',
+        }
             
-    #     find_product = Product.query.filter_by(
-    #         id=id).first()
+        find_question = Questions.query.filter_by(
+            id=id).first()
 
-    #     if find_product:
-    #         product = find_product
-    #     else:
-    #         product = product
+        if find_question:
+            question = find_question
+        else:
+            question = question
         
-    #     category = Category.query.all()
+        if request.method == 'POST':
+            if id:
+                question.name = request.form['name']
+                db.session.commit()
+                return redirect(url_for('get_survey_question'))
+            else:
+                name = request.form['name']
+                question = Questions(name=name)
+                db.session.add(question)
+                db.session.commit()
+                return redirect(url_for('get_survey_question'))
+        else:
+            return render_template('questions/form-question.html', question=question, title=title)
 
-    #     if request.method == 'POST':
-    #         if id:
-    #             product.name = request.form['name']
-    #             product.price = request.form['price']
-    #             product.category_id = request.form['category_id']
-    #             db.session.commit()
-    #             return redirect(url_for('get_all_product'))
-    #         else:
-    #             name = request.form['name']
-    #             price = request.form['price']
-    #             category_id = request.form['category_id']
-    #             product = Product(name=name, price=price,
-    #                               category_id=category_id)
-    #             db.session.add(product)
-    #             db.session.commit()
-    #             return redirect(url_for('get_all_product'))
-    #     else:
-    #         return render_template('products/form-product.html', product=product, category=category, title=title)
+    @app.route('/survey/questions/remove_question/<int:id>')
+    def remove_question(id):
+        question = Questions.query.filter_by(id=id).first()
+        db.session.delete(question)
+        db.session.commit()
+        return redirect(url_for('get_survey_question'))
+    
+    @app.route('/survey/answers')
+    def get_survey_answer():
+        answers = Options.query.all()
+        
+        return render_template('answers/list-answers.html', answers=answers)
+    
+    @app.route('/survey/answers/form-answer/<int:id>', methods=['GET', 'POST'])
+    def form_answer(id):
+        title = ''
 
-    # @app.route('/products/<int:id>')
-    # def get_product_by_id(id):
-    #     product = Product.query.filter_by(id=id).first()
+        if id:
+            title = 'Edit Answer'
+        else:
+            title = 'Add Answer'
+            
+        answer = {
+            'id': 0,
+            'name': '',
+            'questions_id': 0,
+            'questions': {
+                'id': 0,
+                'name': ''
+            }
+        }
+            
+        find_answer = Options.query.filter_by(
+            id=id).first()
 
-    #     return render_template('products/product-detail.html', product=product)
+        if find_answer:
+            answer = find_answer
+        else:
+            answer = answer
+            
+        questions = Questions.query.all()
+        
+        if request.method == 'POST':
+            if id:
+                answer.name = request.form['name']
+                db.session.commit()
+                return redirect(url_for('get_survey_answer'))
+            else:
+                name = request.form['name']
+                questions_id = request.form['questions_id']
+                answer = Options(name=name, questions_id=questions_id)
+                db.session.add(answer)
+                db.session.commit()
+                return redirect(url_for('get_survey_answer'))
+        else:
+            return render_template('answers/form-answer.html', answer=answer, questions=questions, title=title)
 
-    # @app.route('/products/remove_product/<int:id>')
-    # def remove_product(id):
-        # product = Product.query.filter_by(id=id).first()
-        # db.session.delete(product)
-        # db.session.commit()
-        # return redirect(url_for('get_all_product'))
+    @app.route('/survey/answers/remove_answer/<int:id>')
+    def remove_answer(id):
+        answer = Answers.query.filter_by(id=id).first()
+        db.session.delete(answer)
+        db.session.commit()
+        return redirect(url_for('get_survey_answer'))
     return app

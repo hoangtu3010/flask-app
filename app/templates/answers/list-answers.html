@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
+    </script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/css/style-table.css">
+    <title>List Category</title>
+</head>
+
+<body>
+    <div class="container">
+        <h2 style="text-align:center; margin: 20px 0">List Answers</h2>
+        <a href="{{url_for('index')}}">Home</a>
+        <a href="{{url_for('get_survey_question')}}" class="ms-5">Questions</a>
+        <a href="{{url_for('form_answer', id=0)}}" class="btn btn-add">Thêm câu trả lời</a>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>QuestionId</th>
+                    <th width="10%" colspan="2">Công cụ</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for answer in answers %}
+                <tr>
+                    <td>{{ answer.id }}</td>
+                    <td>{{ answer.name }}</td>
+                    <td><a href="{{url_for('form_question', id=answer.questions.id)}}">{{answer.questions_id}}</a></td>
+                    <td>
+                        <a href="{{url_for('form_answer', id=answer['id'])}}"><i class="bi bi-pencil-square"></i></a>
+                    </td>
+                    <td>
+                        <a href="{{url_for('remove_answer', id=answer['id'])}}"><i class="bi bi-trash3"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>
+
+
+<style>
+    .card {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        max-width: 300px;
+        margin: auto;
+        text-align: center;
+        font-family: arial;
+        padding: 10px 20px;
+    }
+
+    .price {
+        color: grey;
+        font-size: 22px;
+    }
+
+    .card button {
+        border: none;
+        outline: 0;
+        padding: 12px;
+        color: white;
+        background-color: #000;
+        text-align: center;
+        cursor: pointer;
+        width: 100%;
+        font-size: 18px;
+    }
+
+    .card button:hover {
+        opacity: 0.7;
+    }
+</style>
