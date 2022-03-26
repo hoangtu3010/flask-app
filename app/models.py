@@ -26,6 +26,7 @@ class Questions(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
+    type = db.Column(db.Text, nullable=False)
     
 class Answers(db.Model):
     __tablename__ = "answers"

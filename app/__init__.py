@@ -1,5 +1,6 @@
+from unicodedata import name
 from flask import Flask, make_response, redirect, render_template, request, url_for
-from .models import Answers, Options, db, Questions
+from .models import Answers, Customers, Options, db, Questions
 from flask_migrate import Migrate
 
 
@@ -16,15 +17,64 @@ def create_app():
     migrate.init_app(app, db)
 
     @app.route('/')
+    @app.route('/survey')
     def index():
         return render_template('index.html')
     
+    @app.route('/survey/report')
+    def get_report():
+        return render_template('report/index.html')
+
+    @app.route('/survey/form', methods=['GET', 'POST'])
+    def form_survey():
+        questions = Questions.query.all()
+        
+        if request.method == 'POST':
+            customers_id = request.form['customers_id']
+            
+            for i in questions:
+                questions_id = request.form['questions_'+str(i.id)]
+                for j in i.options:
+                    options_id = request.form['options_id']
+                        
+                    answer = Answers(questions_id = questions_id, options_id = options_id, customers_id = customers_id)
+                    
+                    db.session.add(answer)
+                    db.session.commit()
+                
+                    
+            return redirect(url_for('get_report'))
+        else:
+            return render_template('survey/form.html', questions = questions)
+
+    @app.route('/survey/information', methods=['GET', 'POST'])
+    def form_information():
+        questions = Questions.query.all()
+        customer_id = 0
+        
+        if request.method == 'POST':
+            name = request.form['name']
+            email = request.form['email']
+            age = request.form['age']
+            career = request.form['career']
+            income = request.form['income']
+            
+            customer = Customers(name = name, email = email, age = age, career = career,  income = income)
+            
+            db.session.add(customer)
+            db.session.commit()
+            
+            customer_id = customer.id
+            return render_template('survey/form.html',questions = questions, customer_id=customer_id)
+        else:
+            return render_template('survey/information.html')
+
     @app.route('/survey/questions')
     def get_survey_question():
         questions = Questions.query.all()
-        
+
         return render_template('questions/list-question.html', questions=questions)
-    
+
     @app.route('/survey/questions/form-question/<int:id>', methods=['GET', 'POST'])
     def form_question(id):
         title = ''
@@ -33,12 +83,13 @@ def create_app():
             title = 'Edit Questions'
         else:
             title = 'Add Questions'
-            
+
         question = {
             'id': 0,
             'name': '',
+            'type': ''
         }
-            
+
         find_question = Questions.query.filter_by(
             id=id).first()
 
@@ -46,15 +97,17 @@ def create_app():
             question = find_question
         else:
             question = question
-        
+
         if request.method == 'POST':
             if id:
                 question.name = request.form['name']
+                question.type = request.form['type']
                 db.session.commit()
                 return redirect(url_for('get_survey_question'))
             else:
                 name = request.form['name']
-                question = Questions(name=name)
+                type = request.form['type']
+                question = Questions(name=name, type=type)
                 db.session.add(question)
                 db.session.commit()
                 return redirect(url_for('get_survey_question'))
@@ -67,13 +120,13 @@ def create_app():
         db.session.delete(question)
         db.session.commit()
         return redirect(url_for('get_survey_question'))
-    
+
     @app.route('/survey/answers')
     def get_survey_answer():
         answers = Options.query.all()
-        
+
         return render_template('answers/list-answers.html', answers=answers)
-    
+
     @app.route('/survey/answers/form-answer/<int:id>', methods=['GET', 'POST'])
     def form_answer(id):
         title = ''
@@ -82,7 +135,7 @@ def create_app():
             title = 'Edit Answer'
         else:
             title = 'Add Answer'
-            
+
         answer = {
             'id': 0,
             'name': '',
@@ -92,7 +145,7 @@ def create_app():
                 'name': ''
             }
         }
-            
+
         find_answer = Options.query.filter_by(
             id=id).first()
 
@@ -100,9 +153,9 @@ def create_app():
             answer = find_answer
         else:
             answer = answer
-            
+
         questions = Questions.query.all()
-        
+
         if request.method == 'POST':
             if id:
                 answer.name = request.form['name']
